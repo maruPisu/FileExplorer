@@ -4,7 +4,8 @@
 #include <QMainWindow>
 #include <file.h>
 #include <QFileInfo>
-#include <QDir>
+#include <QDir>>
+#include <QList>
 
 namespace Ui {
 class MainWindow;
@@ -27,9 +28,12 @@ private:
     void cleanUp();
     void resizeEvent(QResizeEvent* event);
     void clearLayout();
+    void setGrid(int num);
 
     QDir *mDir;
     File *mFile;
+    QList <QString> stack;
+    bool isCleaning;
     int row;
     int col;
     int max_rows;
@@ -37,6 +41,7 @@ private:
 
 private slots:
     void dirDoubleClicked(QString);
+    void on_toolButton_2_clicked();
 };
 
 #endif // MAINWINDOW_H
