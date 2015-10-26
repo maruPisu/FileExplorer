@@ -35,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QString path = ROOT;
     mDir = new QDir(path);
 
+    ui->file_layout_2->setStyleSheet("background-color:white;");
+    ui->current_path->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+
     cleanUp();
 }
 
@@ -50,6 +53,8 @@ void MainWindow::cleanUp()
     row = 0;
 
     ui->current_path->setText(mDir->absolutePath());
+    this->setWindowIcon(QIcon("images/dir.png"));
+    this->setWindowTitle(mDir->dirName().compare("") ? mDir->dirName() : "Root");
     QFileInfoList fileList = mDir->entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries);
     setGrid(fileList.size());
     isCleaning = true;
