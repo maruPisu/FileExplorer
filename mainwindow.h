@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <file.h>
 #include <QFileInfo>
-#include <QDir>>
+#include <QDir>
 #include <QList>
 
 namespace Ui {
@@ -19,16 +19,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
-    void on_toolButton_clicked();
-
 private:
     Ui::MainWindow *ui;
     void insertFile(QFileInfo fileName, int, int, bool);
     void cleanUp();
-    void resizeEvent(QResizeEvent* event);
     void clearLayout();
     void setGrid(int num);
+    QWidget *spacer(int type);
 
     QDir *mDir;
     File *mFile;
@@ -41,7 +38,8 @@ private:
 
 private slots:
     void dirDoubleClicked(QString);
-    void on_toolButton_2_clicked();
+    void on_back_button_clicked();
+    void on_front_button_clicked();
 };
 
 #endif // MAINWINDOW_H

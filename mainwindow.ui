@@ -43,14 +43,14 @@
         <number>2</number>
        </property>
        <item>
-        <widget class="QToolButton" name="toolButton">
+        <widget class="QToolButton" name="back_button">
          <property name="text">
           <string>&lt;</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButton_2">
+        <widget class="QToolButton" name="front_button">
          <property name="text">
           <string>&gt;</string>
          </property>

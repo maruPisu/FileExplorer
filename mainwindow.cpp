@@ -8,15 +8,16 @@
     #include "TargetConditionals.h"
     #if TARGET_OS_MAC
         #define ROOT "/Users"
-    #else
-    #   error "Unknown Apple platform"
     #endif
-#elif __linux__
-    // linux
 #elif __unix__
     #define ROOT "/home/"
-#   error "Unknown compiler"
 #endif
+#ifndef ROOT
+    #define ROOT "/"
+#endif
+
+#define VERTICAL 0
+#define HORIZONTAL 1
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -53,8 +54,8 @@ void MainWindow::cleanUp()
     row = 0;
 
     ui->current_path->setText(mDir->absolutePath());
-    this->setWindowIcon(QIcon("images/dir.png"));
     this->setWindowTitle(mDir->dirName().compare("") ? mDir->dirName() : "Root");
+
     QFileInfoList fileList = mDir->entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries);
     setGrid(fileList.size());
     isCleaning = true;
@@ -68,26 +69,37 @@ void MainWindow::cleanUp()
         }
     }
     isCleaning = false;
-    QWidget* verticalSpacer = new QWidget();
-    verticalSpacer->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
-    QWidget* horizontalSpacer = new QWidget();
-    horizontalSpacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
-    ui->file_layout->addWidget(verticalSpacer, max_rows, 0);
-    ui->file_layout->addWidget(horizontalSpacer, 0, max_cols);
+
+    ui->file_layout->addWidget(spacer(VERTICAL), max_rows, 0);
+    ui->file_layout->addWidget(spacer(HORIZONTAL), 0, max_cols);
+}
+
+QWidget *MainWindow::spacer(int type)
+{
+    QWidget* spacer = new QWidget();
+    switch(type)
+    {
+    case HORIZONTAL:
+        spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
+        break;
+    case VERTICAL:
+        spacer->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
+    }
+    return spacer;
 }
 
 void MainWindow::setGrid(int num)
 {
     if(num < 6)
-        max_cols =6;
+        max_cols = 6;
     if(num > 5 && num < 10)
-        max_cols =3;
+        max_cols = 3;
     if(num > 9 && num < 17)
-        max_cols =4;
+        max_cols = 4;
     if(num > 16 && num < 26)
-        max_cols =5;
+        max_cols = 5;
     if(num > 25)
-        max_cols =6;
+        max_cols = 6;
 }
 
 void MainWindow::clearLayout()
@@ -109,20 +121,6 @@ void MainWindow::insertFile(QFileInfo fileInfo, int x, int y, bool isDir)
     connect(mFile, SIGNAL(doubleClicked(QString)), this, SLOT(dirDoubleClicked(QString)));
 }
 
-void MainWindow::resizeEvent(QResizeEvent* event)
-{
-    QMainWindow::resizeEvent(event);
-//   qDebug() << QString::number(this->width() ) << ", " <<QString::number(this->height() );
-}
-
-void MainWindow::on_toolButton_clicked()
-{
-    if(stack.indexOf(mDir->absolutePath()) == -1)
-        stack.push_front(mDir->absolutePath());
-    mDir->cdUp();
-    cleanUp();
-}
-
 void MainWindow::dirDoubleClicked(QString newPath)
 {
     stack.clear();
@@ -130,7 +128,15 @@ void MainWindow::dirDoubleClicked(QString newPath)
     cleanUp();
 }
 
-void MainWindow::on_toolButton_2_clicked()
+void MainWindow::on_back_button_clicked()
+{
+    if(stack.indexOf(mDir->absolutePath()) == -1)
+        stack.push_front(mDir->absolutePath());
+    mDir->cdUp();
+    cleanUp();
+}
+
+void MainWindow::on_front_button_clicked()
 {
     int index = stack.indexOf(mDir->absolutePath()) + 1; // -1 if is not in the stack, it means it will take the 0th element
     if(stack.count() > index)
@@ -138,5 +144,4 @@ void MainWindow::on_toolButton_2_clicked()
         mDir = new QDir(stack.at(index));
         cleanUp();
     }
-
 }
