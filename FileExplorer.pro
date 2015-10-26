@@ -14,10 +14,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    file.cpp
+    directory.cpp \
+    notdir.cpp \
+    filefactory.cpp
 
 HEADERS  += mainwindow.h \
-    file.h
+    file.h \
+    directory.h \
+    notdir.h \
+    filefactory.h
 
 FORMS    += mainwindow.ui \
     file.ui

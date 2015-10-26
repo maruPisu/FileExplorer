@@ -1,9 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <filefactory.h>
 
 #ifdef _WIN32
-   #define ROOT "c:/"
+    #define ROOT "c:/"
 #elif __APPLE__
     #include "TargetConditionals.h"
     #if TARGET_OS_MAC
@@ -25,13 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    row = 0;
-    col = 0;
-
-    max_rows = 4;
     max_cols = 10;
-
-    isCleaning = false;
 
     QString path = ROOT;
     mDir = new QDir(path);
@@ -58,19 +53,17 @@ void MainWindow::cleanUp()
 
     QFileInfoList fileList = mDir->entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries);
     setGrid(fileList.size());
-    isCleaning = true;
     foreach(QFileInfo mInfo, fileList)
     {
-        insertFile(mInfo, row, col, mInfo.isDir());
+        insertFile(mInfo, row, col);
         if(++col == max_cols)
         {
             col = 0;
             row++;
         }
     }
-    isCleaning = false;
 
-    ui->file_layout->addWidget(spacer(VERTICAL), max_rows, 0);
+    ui->file_layout->addWidget(spacer(VERTICAL)  , row + 1, 0);
     ui->file_layout->addWidget(spacer(HORIZONTAL), 0, max_cols);
 }
 
@@ -113,12 +106,17 @@ void MainWindow::clearLayout()
     }
 }
 
-void MainWindow::insertFile(QFileInfo fileInfo, int x, int y, bool isDir)
+void MainWindow::insertFile(QFileInfo fileInfo, int x, int y)
 {
-    mFile = new File(fileInfo, isDir);
-    ui->file_layout->addWidget(mFile, x, y);
+    FileFactory mFactory;
 
+    if(fileInfo.isDir())
+        mFile = mFactory.getFile(FileFactory::DIR, fileInfo);
+    else
+        mFile = mFactory.getFile(FileFactory::NOT_DIR, fileInfo);
+    qDebug() << "ok";
     connect(mFile, SIGNAL(doubleClicked(QString)), this, SLOT(dirDoubleClicked(QString)));
+    ui->file_layout->addWidget(mFile, x, y);
 }
 
 void MainWindow::dirDoubleClicked(QString newPath)

@@ -21,7 +21,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    void insertFile(QFileInfo fileName, int, int, bool);
+    void insertFile(QFileInfo fileName, int, int);
     void cleanUp();
     void clearLayout();
     void setGrid(int num);
@@ -30,10 +30,8 @@ private:
     QDir *mDir;
     File *mFile;
     QList <QString> stack;
-    bool isCleaning;
     int row;
     int col;
-    int max_rows;
     int max_cols;
 
 private slots:
